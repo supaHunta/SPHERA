@@ -52,9 +52,9 @@ class Authorization(unittest.TestCase):
         """
         print('\n\nsetup')
 
-    def test_01_authorization(self):
+    def test_001_authorization(self):
         global cookies
-        print('test_01_authorization')
+        print('test_001_authorization')
         wait.until(EC.presence_of_element_located((By.NAME, "phone")))
         self._prepare_form_fields(USER_OWNER_PHONE)
         wait.until(EC.presence_of_element_located(
@@ -79,9 +79,9 @@ class Authorization(unittest.TestCase):
         dialog.find_elements(By.TAG_NAME, 'button')[0].click()
         cookies = driver.get_cookies()
 
-    @unittest.skip("") 
-    def test_02_choosing_random_channel_and_typing_a_message(self):
-        print("test_02_choosing_random_channel_and_typing_a_message")
+    @unittest.skip("")
+    def test_002_choosing_random_channel_and_typing_a_message(self):
+        print("test_002_choosing_random_channel_and_typing_a_message")
         self.driver.get(CONFIG_BASE_URL)
         wait.until(EC.presence_of_all_elements_located(
             (By.CLASS_NAME, 'channel-data-container')))
@@ -97,13 +97,13 @@ class Authorization(unittest.TestCase):
             (By.XPATH, '//button[text()="Отправить"]'))).click()
 
     @unittest.skip("")
-    def test_03_creating_and_deleting_a_channel(self):
+    def test_003_creating_and_deleting_a_channel(self):
         """Test creating and deleting a channel"""
-        print("test_03_creating_and_deleting_a_channel")
+        print("test_003_creating_and_deleting_a_channel")
 
         CREATE_CHANNEL_BTN_SELECTOR = "button[aria-label='Создать канал']"
         FORM_DISCRIPTION_FIELD_SELECTOR = "textarea[name='description']"
-        
+
         self.driver.get(CONFIG_BASE_URL)
         # Wait until the "Create channel" button appears
         wait.until(EC.presence_of_element_located(
@@ -150,9 +150,9 @@ class Authorization(unittest.TestCase):
             print('No toasts found!', ex)
         sleep(5)
 
-    @unittest.skip("") 
-    def test_04_replying_to_a_comment(self):
-        print("test_04_replying_to_a_comment")
+    @unittest.skip("")
+    def test_004_replying_to_a_comment(self):
+        print("test_004_replying_to_a_comment")
         self.driver.get(CONFIG_BASE_URL)
         wait.until(EC.presence_of_all_elements_located(
             (By.CLASS_NAME, 'channel-data-container')))
@@ -161,12 +161,15 @@ class Authorization(unittest.TestCase):
         random_channel = random.choice(channel)
         random_channel.click()
         wait.until(EC.presence_of_all_elements_located(
-            (By.CLASS_NAME, 'message-card')))
-        comment_box = driver.find_elements(By.CLASS_NAME, 'message-card')
-        comment1 = comment_box[-1]
+            (By.CLASS_NAME, 'content-container')))
+        comment_box_parent = driver.find_element(By.CLASS_NAME, 'content-container')
+        comment_box = comment_box_parent.find_elements(By.TAG_NAME, 'div')[0]
+        comment1 = comment_box.find_elements(By.CLASS_NAME, "message-card")[-1]
+        comment_first = comment1.text
+
         comment_hover1 = ActionChains(driver).move_to_element(comment1)
         comment_hover1.perform()
-        
+
         WebDriverWait(comment1, 10).until(EC.visibility_of_element_located(
             (By.CSS_SELECTOR, 'button[aria-label="Ответить на сообщение"]'))).click()
         wait.until(EC.presence_of_element_located(
@@ -175,9 +178,10 @@ class Authorization(unittest.TestCase):
             By.CSS_SELECTOR, 'div[aria-owns="quill-mention-list"]').send_keys(rand.generate_random_string(15))
         wait.until(EC.presence_of_element_located(
             (By.XPATH, '//button[text()="Отправить"]'))).click()
+        
 
-    @unittest.skip("") 
-    def test_05_opening_a_discussing(self):
+    @unittest.skip("")
+    def test_005_opening_a_discussing(self):
         """
         This test case verifies if the user can leave a reaction on a comment.
         It performs the following steps:
@@ -194,7 +198,7 @@ class Authorization(unittest.TestCase):
 
         Note: The test currently does not verify if the reaction was successfully added.
         """
-        print("test_05_opening_a_discussing")
+        print("test_005_opening_a_discussing")
 
         # Navigate to the configuration URL
         self.driver.get(CONFIG_BASE_URL)
@@ -214,9 +218,14 @@ class Authorization(unittest.TestCase):
             By.CSS_SELECTOR, 'div[aria-owns="quill-mention-list"]').send_keys(rand.generate_random_string(15))
         wait.until(EC.presence_of_element_located(
             (By.XPATH, '//button[text()="Отправить"]'))).click()
+        sleep(1)
         # Wait for all the comments to load
-        comment_box = driver.find_elements(By.CLASS_NAME, 'message-card')
-        comment1 = comment_box[-1]
+        wait.until(EC.presence_of_all_elements_located(
+            (By.CLASS_NAME, 'content-container')))
+        comment_box_parent = driver.find_element(By.CLASS_NAME, 'content-container')
+        comment_box = comment_box_parent.find_elements(By.TAG_NAME, 'div')[0]
+        comment_box_unit = comment_box.find_elements(By.CLASS_NAME, 'message-card')
+        comment1 = comment_box_unit[-1]
         # Select a random comment
         # Perform a hover action on the comment
         comment_hover = ActionChains(driver).move_to_element(comment1)
@@ -225,7 +234,7 @@ class Authorization(unittest.TestCase):
         # Click on the reaction button
         try:
             WebDriverWait(comment1, 10).until(EC.visibility_of_element_located(
-                       (By.CSS_SELECTOR, 'button[aria-label="Начать обсуждение"]'))).click()
+                (By.CSS_SELECTOR, 'button[aria-label="Начать обсуждение"]'))).click()
         except Exception as ex:
             print('Reaction button not found!', ex)
         wait.until(EC.presence_of_all_elements_located(
@@ -237,8 +246,8 @@ class Authorization(unittest.TestCase):
         driver.find_elements(By.TAG_NAME, 'button')[-1].click()
 
     @unittest.skip("")
-    def test_06_editing_a_comment(self):
-        print("test_06_editing_a_comment")
+    def test_006_editing_a_comment(self):
+        print("test_006_editing_a_comment")
 
         # Navigate to the configuration URL
         self.driver.get(CONFIG_BASE_URL)
@@ -261,13 +270,12 @@ class Authorization(unittest.TestCase):
 
         # Wait for all the comments to load
         wait.until(EC.presence_of_all_elements_located(
-            (By.CLASS_NAME, 'message-card')))
-        sleep(1)
-        # Select a last comment
-        comment_box = driver.find_elements(By.CLASS_NAME, 'message-card')
-        last_comment = comment_box[0]
-        comment_first = last_comment.text
-        comment = last_comment
+            (By.CLASS_NAME, 'content-container')))
+        comment_box_parent = driver.find_element(By.CLASS_NAME, 'content-container')
+        comment_box = comment_box_parent.find_elements(By.TAG_NAME, 'div')[0]
+        comment_box_unit = comment_box.find_elements(By.CLASS_NAME, "message-card")[-1]
+        comment_first = comment_box_unit.text
+        comment = comment_box_unit
 
         # Perform a hover action on the comment
         comment_hover = ActionChains(driver).move_to_element(comment)
@@ -288,17 +296,24 @@ class Authorization(unittest.TestCase):
             (By.CLASS_NAME, 'message-card')))
         sleep(0.5)
         # Select a last comment
-        comment_box = driver.find_elements(By.CLASS_NAME, 'message-card')
-        last_comment = comment_box[0]
-        comment_second = last_comment.text
+        wait.until(EC.presence_of_all_elements_located(
+            (By.CLASS_NAME, 'content-container')))
+        comment_box_parent = driver.find_element(By.CLASS_NAME, 'content-container')
+        comment_box = comment_box_parent.find_elements(By.TAG_NAME, 'div')[0]
+        comment_box_unit = comment_box.find_elements(By.CLASS_NAME, "message-card")[-1]
+        comment_second = comment_box_unit.text
+        comment = comment_box_unit
+
 
         # Check if the comments are different
         self.assertNotEqual(comment_first, comment_second)
+        print('Comments are different!')
         sleep(2)
-    @unittest.skip("")  
-    def test_07_leaving_a_reaction(self):
-        
-        print("test_07_leaving_a_reaction")
+
+    @unittest.skip("")
+    def test_007_leaving_a_reaction(self):
+
+        print("test_007_leaving_a_reaction")
         self.driver.get(CONFIG_BASE_URL)
         wait.until(EC.presence_of_all_elements_located(
             (By.CLASS_NAME, 'channel-data-container')))
@@ -307,32 +322,81 @@ class Authorization(unittest.TestCase):
         random_channel = random.choice(channel)
         random_channel.click()
         wait.until(EC.presence_of_all_elements_located(
-            (By.CLASS_NAME, 'message-card')))
-        comment_box = driver.find_elements(By.CLASS_NAME, 'message-card')
-        comment1 = comment_box[-1]
+            (By.CLASS_NAME, 'content-container')))
+        comment_box_parent = driver.find_element(By.CLASS_NAME, 'content-container')
+        comment_box = comment_box_parent.find_elements(By.TAG_NAME, 'div')[0]
+        comment_box_unit = comment_box.find_elements(By.CLASS_NAME, "message-card")
+        comment1 = comment_box_unit[-1]
         comment_hover1 = ActionChains(driver).move_to_element(comment1)
         comment_hover1.perform()
-        
+
         WebDriverWait(comment1, 10).until(EC.visibility_of_element_located(
             (By.CSS_SELECTOR, 'button[aria-label="Добавить реакцию"]'))).click()
         shadow_host = driver.find_element(By.TAG_NAME, 'em-emoji-picker')
-        WebDriverWait(get_shadow_root(shadow_host), 20).until(EC.element_to_be_clickable((By.CSS_SELECTOR, 'button[aria-setsize = "1747"]')))
-        smile_window = get_shadow_root(shadow_host).find_elements(By.CSS_SELECTOR, 'button[aria-setsize = "1747"]')
+        WebDriverWait(get_shadow_root(shadow_host), 20).until(
+            EC.element_to_be_clickable((By.CSS_SELECTOR, 'button[aria-setsize = "1747"]')))
+        smile_window = get_shadow_root(shadow_host).find_elements(
+            By.CSS_SELECTOR, 'button[aria-setsize = "1747"]')
         randomm_smile = random.choice(smile_window)
         randomm_smile.click()
         sleep(0.5)
-        
-        
 
-    def test_08_archiving_a_channel_after_creating(self):
-        print("test_08_archiving_a_channel")
-        
+    @unittest.skip("")
+    def test_008_deleting_a_message(self):
+        print("test_008_deleting_a_message")
+        self.driver.get(CONFIG_BASE_URL)
+        wait.until(EC.presence_of_all_elements_located(
+            (By.CLASS_NAME, 'channel-data-container')))
+        channel = driver.find_elements(
+            By.CLASS_NAME, 'channel-data-container')[1:]
+        random_channel = random.choice(channel)
+        random_channel.click()
+        wait.until(EC.presence_of_element_located(
+            (By.CSS_SELECTOR, 'div[aria-owns="quill-mention-list"]'))).click()
+        self.driver.find_element(
+            By.CSS_SELECTOR, 'div[aria-owns="quill-mention-list"]').send_keys(rand.generate_random_string(15))
+        wait.until(EC.presence_of_element_located(
+            (By.XPATH, '//button[text()="Отправить"]'))).click()
+        wait.until(EC.presence_of_all_elements_located(
+            (By.CLASS_NAME, 'content-container')))
+        comment_box_parent = driver.find_element(By.CLASS_NAME, 'content-container')
+        comment_box = comment_box_parent.find_elements(By.TAG_NAME, 'div')[0]
+        comment_box_unit = comment_box.find_elements(By.CLASS_NAME, "message-card")
+        comment = comment_box_unit[-1]
+        comment_1 = comment.text
+        comment_hover = ActionChains(driver).move_to_element(comment)
+        comment_hover.perform()
+        WebDriverWait(comment, 10).until(EC.visibility_of_element_located(
+            (By.CSS_SELECTOR, 'button[aria-label="Другие действия"]'))).click()
+        wait.until(EC.presence_of_element_located(
+            (By.CLASS_NAME, 'menu-container')))
+        menu_container = driver.find_element(By.CLASS_NAME, 'menu-container')
+        WebDriverWait(menu_container, 10).until(
+            EC.presence_of_all_elements_located((By.TAG_NAME, 'li')))
+        menu_container.find_elements(By.TAG_NAME, 'li')[-1].click()
+        wait.until(EC.presence_of_element_located(
+            (By.CSS_SELECTOR, 'button[type="submit"]'))).click()
+        sleep(2)
+        comment_box_parent = driver.find_element(By.CLASS_NAME, 'content-container')
+        comment_box = comment_box_parent.find_elements(By.TAG_NAME, 'div')[0]
+        comment_box_unit = comment_box.find_elements(By.CLASS_NAME, "message-card")
+        comment = comment_box_unit[-1]
+        comment_2 = comment.text
+        self.assertNotEqual(comment_1, comment_2)
+        print(comment_1)
+        print(comment_2)
+        print('Comment has been deleted successfully!')
+
+    @unittest.skip('')
+    def test_009_archiving_a_channel_after_creating(self):
+        print("test_009_archiving_a_channel")
+
         GENERATED_NAME = rand.generate_random_string(15)
         GENERATED_DESCRIPTION = rand.generate_random_string(60)
-        
+
         CREATE_CHANNEL_BTN_SELECTOR = "button[aria-label='Создать канал']"
         FORM_DISCRIPTION_FIELD_SELECTOR = "textarea[name='description']"
-        
+
         self.driver.get(CONFIG_BASE_URL)
         # Wait until the "Create channel" button appears
         wait.until(EC.presence_of_element_located(
@@ -369,17 +433,23 @@ class Authorization(unittest.TestCase):
         # Wait until the confirmation dialog appears
         wait.until(EC.presence_of_element_located(
             (By.CSS_SELECTOR, 'button[type="submit"]'))).click()
-        wait.until(EC.presence_of_all_elements_located((By.CLASS_NAME, 'channels-list-header')))
-        channel_wrapper = driver.find_elements(By.CLASS_NAME, 'channels-list-header')[0].click()
-        button_wrapper = driver.find_elements(By.CLASS_NAME, 'header-content-wrapper')[1]
-        menulist_clicker = button_wrapper.find_elements(By.CSS_SELECTOR, 'button[variant="permanent"]')[0]
+        wait.until(EC.presence_of_all_elements_located(
+            (By.CLASS_NAME, 'channels-list-header')))
+        channel_wrapper = driver.find_elements(
+            By.CLASS_NAME, 'channels-list-header')[0].click()
+        button_wrapper = driver.find_elements(
+            By.CLASS_NAME, 'header-content-wrapper')[1]
+        menulist_clicker = button_wrapper.find_elements(
+            By.CSS_SELECTOR, 'button[variant="permanent"]')[0]
         menulist_clicker.click()
-        wait.until(EC.presence_of_element_located((By.CSS_SELECTOR, 'ul[role="menu"]')))
+        wait.until(EC.presence_of_element_located(
+            (By.CSS_SELECTOR, 'ul[role="menu"]')))
         menulist = driver.find_element(By.CSS_SELECTOR, 'ul[role="menu"]')
         listitems = menulist.find_elements(By.TAG_NAME, 'li')[-1].click()
         wait.until(EC.presence_of_all_elements_located(
             (By.CLASS_NAME, 'channel-name')))
         channel_list = driver.find_elements(By.CLASS_NAME, 'channel-name')
+
         for channel in channel_list:
             if channel.text == GENERATED_NAME:
                 self.assertEqual(channel.text, GENERATED_NAME)
@@ -388,6 +458,7 @@ class Authorization(unittest.TestCase):
                 print('Channel has been successfully archived!')
             else:
                 self.assertNotEqual(channel.text, GENERATED_NAME)
+
         wait.until(EC.presence_of_element_located(
             (By.CLASS_NAME, 'header__button-icon'))).click()
         # Click on the "Channels" tab
@@ -404,20 +475,123 @@ class Authorization(unittest.TestCase):
         # Wait until the confirmation dialog appears
         wait.until(EC.presence_of_element_located(
             (By.CSS_SELECTOR, 'button[type="submit"]'))).click()
+
         # Wait until the success toast appears
         try:
-            wait.until(EC.presence_of_element_located(
+            wait.until(EC.presence_of_all_elements_located(
                 (By.CLASS_NAME, 'Toastify__toast')))
             toast = driver.find_element(By.CLASS_NAME, 'Toastify__toast')
             self.assertEqual(toast.text, "Канал удален")
         except Exception as ex:
             print('No toasts found!', ex)
+
         sleep(5)
+    @unittest.skip("")
+    def test_010_pin_a_message(self):
+        print("test_010_pin_a_message")
+        self.driver.get(CONFIG_BASE_URL)
+        wait.until(EC.presence_of_all_elements_located(
+            (By.CLASS_NAME, 'channel-data-container')))
+        channel = driver.find_elements(
+            By.CLASS_NAME, 'channel-data-container')[1:]
+        random_channel = random.choice(channel)
+        random_channel.click()
+        sleep(0.5)
+        wait.until(EC.presence_of_element_located(
+            (By.CSS_SELECTOR, 'div[aria-owns="quill-mention-list"]'))).click()
+        self.driver.find_element(
+            By.CSS_SELECTOR, 'div[aria-owns="quill-mention-list"]').send_keys(rand.generate_random_string(15))
+        wait.until(EC.presence_of_element_located(
+            (By.XPATH, '//button[text()="Отправить"]'))).click()
+        sleep(0.5)
+        wait.until(EC.presence_of_all_elements_located(
+            (By.CLASS_NAME, 'content-container')))
+        comment_box_parent = driver.find_element(By.CLASS_NAME, 'content-container')
+        comment_box = comment_box_parent.find_elements(By.TAG_NAME, 'div')[0]
+        comment_box_unit = comment_box.find_elements(By.CLASS_NAME, "message-card")
+        comment = comment_box_unit[0]
+        pinned_comment_texts = comment.text
+        comment_hover = ActionChains(driver).move_to_element(comment)
+        comment_hover.perform()
+        WebDriverWait(comment, 10).until(EC.visibility_of_element_located(
+            (By.CSS_SELECTOR, 'button[aria-label="Другие действия"]'))).click()
+        sleep(0.5)
+        wait.until(EC.presence_of_element_located(
+            (By.CLASS_NAME, 'menu-container')))
+        menu_container = driver.find_element(By.CLASS_NAME, 'menu-container')
+        WebDriverWait(menu_container, 10).until(
+            EC.presence_of_all_elements_located((By.TAG_NAME, 'li')))
+        menu_container.find_elements(By.TAG_NAME, 'li')[1].click()
+        driver.find_element(By.CSS_SELECTOR, 'div[role="presentation"]').click()
         
-            
-            
+        wait.until(EC.element_to_be_clickable((By.CSS_SELECTOR, '.feed-header .MuiBox-root .header__pinned'))).click()
+ 
+        wait.until(EC.presence_of_all_elements_located(
+            (By.CLASS_NAME, 'header__pinned-block')))
+        pin_block = driver.find_element(By.CLASS_NAME, 'header__pinned-block')
+        pin_list = pin_block.find_element(By.CLASS_NAME, 'header__pinned-list')
+        pinned_comments = pin_list.find_elements(
+            By.CLASS_NAME, 'pinned-comment')
+
+        for pinned_comment in pinned_comments:
+            if pinned_comment.text == comment.text:
+                self.assertEqual(pinned_comment.text, pinned_comment_texts)
+                print('Comment has been successfully pinned!')
+                sleep(0.5)
+            else:
+                self.assertNotEqual(pinned_comment.text, pinned_comment_texts)
+                
+                
+    def test_011_adding_a_new_member_to_channel(self):
+        print("test_011_adding_a_new_member_to_channel")
+        self.driver.get(CONFIG_BASE_URL)
+        wait.until(EC.presence_of_all_elements_located(
+            (By.CLASS_NAME, 'channel-data-container')))
+        channel = driver.find_elements(
+            By.CLASS_NAME, 'channel-data-container')[1:]
+        random_channel = random.choice(channel)
+        random_channel.click()
+        wait.until(EC.presence_of_element_located((By.CLASS_NAME, 'channel-member__icon-button'))).click()
+        wait.until(EC.presence_of_element_located((By.CSS_SELECTOR, 'ul[role="listbox"]')))
+        user_list = driver.find_element(By.CSS_SELECTOR, 'ul[role="listbox"]')
+        user = user_list.find_elements(By.TAG_NAME, 'li')[:5]
+        selected_user = user[0]
         
-    
+        user_name = selected_user.find_element(By.CLASS_NAME, 'list-item__name').text
+        print(user_name)
+        selected_user.click()
+        wait.until(EC.element_to_be_clickable((By.CSS_SELECTOR, 'button[type="submit"]'))).click()
+        sleep(0.5)
+        wait.until(EC.presence_of_all_elements_located(
+            (By.CLASS_NAME, 'Toastify__toast--success')))
+        toast = driver.find_element(By.CLASS_NAME, 'Toastify__toast--success')
+        self.assertEqual(toast.text, "Пользователи успешно добавлены")
+        wait.until_not(EC.visibility_of_element_located((By.CSS_SELECTOR, 'div[role="presentation"]')))
+        wait.until_not(EC.visibility_of_element_located((By.CLASS_NAME, 'Toastify__toast--success')))
+        wait.until(EC.element_to_be_clickable((By.CLASS_NAME, 'channel-member__avatar'))).click()
+        wait.until(EC.presence_of_element_located((By.CSS_SELECTOR, '.dialog__paper .MuiBox-root .list__member-item')))
+        items = driver.find_elements(By.CSS_SELECTOR, '.dialog__paper .MuiBox-root .list__member-item')
+        
+        for item in items:
+            item_name = item.find_element(By.CSS_SELECTOR, '.member-item__profile .MuiBox-root .profile-item__name')
+            if item_name.text == user_name:
+                self.assertEqual(item_name.text, user_name)
+                print('Found invited person: ',item_name.text)
+                print('User has been successfully added to the channel!')
+                sleep(0.5)
+                user_deletion = item.find_element(By.CLASS_NAME, 'member-item__more-button').click()
+                deleting_button = driver.find_elements(By.CSS_SELECTOR, '.MuiPopover-root .MuiPaper-elevation .MuiMenu-list .MuiMenuItem-root')[-1].click()
+                wait.until(EC.presence_of_element_located((By.CSS_SELECTOR, 'button[type="submit"]'))).click()
+                wait.until(EC.presence_of_all_elements_located(
+                (By.CLASS_NAME, 'Toastify__toast--success')))
+                toast = driver.find_element(By.CLASS_NAME, 'Toastify__toast--success')
+                self.assertEqual(toast.text, "Пользователь удален из канала")
+                sleep(5)
+            else:
+                self.assertNotEqual(item.text, user_name)
+                print('Wrong person: ',item_name.text)
+            
+
     def tearDown(self):
         print('tearDown')
 
