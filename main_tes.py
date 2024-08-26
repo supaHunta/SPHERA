@@ -1,4 +1,4 @@
-import requests
+
 from time import sleep
 import random_file_generator as RFG
 import rand
@@ -79,7 +79,7 @@ class Authorization(unittest.TestCase):
         dialog.find_elements(By.TAG_NAME, 'button')[0].click()
         cookies = driver.get_cookies()
 
-    @unittest.skip("")
+    # @unittest.skip("")
     def test_002_choosing_random_channel_and_typing_a_message(self):
         print("test_002_choosing_random_channel_and_typing_a_message")
         self.driver.get(CONFIG_BASE_URL)
@@ -96,7 +96,7 @@ class Authorization(unittest.TestCase):
         wait.until(EC.presence_of_element_located(
             (By.XPATH, '//button[text()="Отправить"]'))).click()
 
-    @unittest.skip("")
+    # @unittest.skip("")
     def test_003_creating_and_deleting_a_channel(self):
         """Test creating and deleting a channel"""
         print("test_003_creating_and_deleting_a_channel")
@@ -150,7 +150,7 @@ class Authorization(unittest.TestCase):
             print('No toasts found!', ex)
         sleep(5)
 
-    @unittest.skip("")
+    # @unittest.skip("")
     def test_004_replying_to_a_comment(self):
         print("test_004_replying_to_a_comment")
         self.driver.get(CONFIG_BASE_URL)
@@ -180,7 +180,7 @@ class Authorization(unittest.TestCase):
             (By.XPATH, '//button[text()="Отправить"]'))).click()
         
 
-    @unittest.skip("")
+    # @unittest.skip("")
     def test_005_opening_a_discussing(self):
         """
         This test case verifies if the user can leave a reaction on a comment.
@@ -245,7 +245,7 @@ class Authorization(unittest.TestCase):
             (By.TAG_NAME, 'button')))
         driver.find_elements(By.TAG_NAME, 'button')[-1].click()
 
-    @unittest.skip("")
+    # @unittest.skip("")
     def test_006_editing_a_comment(self):
         print("test_006_editing_a_comment")
 
@@ -341,7 +341,7 @@ class Authorization(unittest.TestCase):
         randomm_smile.click()
         sleep(0.5)
 
-    @unittest.skip("")
+    # @unittest.skip("")
     def test_008_deleting_a_message(self):
         print("test_008_deleting_a_message")
         self.driver.get(CONFIG_BASE_URL)
@@ -387,7 +387,7 @@ class Authorization(unittest.TestCase):
         print(comment_2)
         print('Comment has been deleted successfully!')
 
-    @unittest.skip('')
+    # @unittest.skip("")
     def test_009_archiving_a_channel_after_creating(self):
         print("test_009_archiving_a_channel")
 
@@ -486,7 +486,7 @@ class Authorization(unittest.TestCase):
             print('No toasts found!', ex)
 
         sleep(5)
-    @unittest.skip("")
+    # @unittest.skip("")
     def test_010_pin_a_message(self):
         print("test_010_pin_a_message")
         self.driver.get(CONFIG_BASE_URL)
@@ -541,7 +541,7 @@ class Authorization(unittest.TestCase):
             else:
                 self.assertNotEqual(pinned_comment.text, pinned_comment_texts)
                 
-                
+    # @unittest.skip("")            
     def test_011_adding_a_new_member_to_channel(self):
         print("test_011_adding_a_new_member_to_channel")
         self.driver.get(CONFIG_BASE_URL)
@@ -590,7 +590,14 @@ class Authorization(unittest.TestCase):
             else:
                 self.assertNotEqual(item.text, user_name)
                 print('Wrong person: ',item_name.text)
-            
+        
+        
+        
+    def test_012_changing_users_role(self):
+        print("test_012_changing_users_role")
+        self.driver.get(CONFIG_BASE_URL)
+        wait.until(EC.presence_of_element_located((By.CSS_SELECTOR,'a[aria-label="Система управления персоналом"]'))).click()
+        sleep(5)
 
     def tearDown(self):
         print('tearDown')
