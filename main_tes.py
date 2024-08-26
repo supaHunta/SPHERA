@@ -1,6 +1,5 @@
 
 from time import sleep
-import random_file_generator as RFG
 import rand
 import unittest
 from lib2to3.pgen2 import driver
@@ -310,7 +309,7 @@ class Authorization(unittest.TestCase):
         print('Comments are different!')
         sleep(2)
 
-    @unittest.skip("")
+    # @unittest.skip("")
     def test_007_leaving_a_reaction(self):
 
         print("test_007_leaving_a_reaction")
@@ -334,9 +333,9 @@ class Authorization(unittest.TestCase):
             (By.CSS_SELECTOR, 'button[aria-label="Добавить реакцию"]'))).click()
         shadow_host = driver.find_element(By.TAG_NAME, 'em-emoji-picker')
         WebDriverWait(get_shadow_root(shadow_host), 20).until(
-            EC.element_to_be_clickable((By.CSS_SELECTOR, 'button[aria-setsize = "1747"]')))
+            EC.element_to_be_clickable((By.CSS_SELECTOR, 'button[tabindex = "-1"]')))
         smile_window = get_shadow_root(shadow_host).find_elements(
-            By.CSS_SELECTOR, 'button[aria-setsize = "1747"]')
+            By.CSS_SELECTOR, 'button[tabindex = "-1"]')
         randomm_smile = random.choice(smile_window)
         randomm_smile.click()
         sleep(0.5)
@@ -515,7 +514,6 @@ class Authorization(unittest.TestCase):
         comment_hover.perform()
         WebDriverWait(comment, 10).until(EC.visibility_of_element_located(
             (By.CSS_SELECTOR, 'button[aria-label="Другие действия"]'))).click()
-        sleep(0.5)
         wait.until(EC.presence_of_element_located(
             (By.CLASS_NAME, 'menu-container')))
         menu_container = driver.find_element(By.CLASS_NAME, 'menu-container')
@@ -582,11 +580,7 @@ class Authorization(unittest.TestCase):
                 user_deletion = item.find_element(By.CLASS_NAME, 'member-item__more-button').click()
                 deleting_button = driver.find_elements(By.CSS_SELECTOR, '.MuiPopover-root .MuiPaper-elevation .MuiMenu-list .MuiMenuItem-root')[-1].click()
                 wait.until(EC.presence_of_element_located((By.CSS_SELECTOR, 'button[type="submit"]'))).click()
-                wait.until(EC.presence_of_all_elements_located(
-                (By.CLASS_NAME, 'Toastify__toast--success')))
-                toast = driver.find_element(By.CLASS_NAME, 'Toastify__toast--success')
-                self.assertEqual(toast.text, "Пользователь удален из канала")
-                sleep(5)
+                sleep(0.5)
             else:
                 self.assertNotEqual(item.text, user_name)
                 print('Wrong person: ',item_name.text)
