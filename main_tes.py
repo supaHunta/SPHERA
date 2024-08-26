@@ -1,4 +1,4 @@
-
+import requests
 from time import sleep
 import rand
 import unittest
@@ -20,11 +20,18 @@ driver = webdriver.Chrome()
 wait = WebDriverWait(driver, 30)
 
 CONFIG_BASE_URL = "https://staging.sphera.work/"
+API_SIGN_IN_CHECK_AND_SEND = 'https://api.staging.sphera.work/api/v1/auth/phone/check-and-send'
+API_SIGN_IN = 'https://api.staging.sphera.work/api/v1/auth/sign-in'
+API_INNA_DERCHUK_ROLE = 'https://api.staging.sphera.work/api/v1/users/update/7'
+API_INNA_DERCHUK = 'https://api.staging.sphera.work/api/v1/users/profile/7'
 
 USER_OWNER_PHONE = "9999999999"
 USER_ADMIN_PHONE = "9777777777"
 USER_USER_PHONE = "9111111111"
 
+user_token = None
+user_refresh_token = None
+user_device_id = None
 
 def get_shadow_root(element):
     return driver.execute_script('return arguments[0].shadowRoot', element)
@@ -78,7 +85,7 @@ class Authorization(unittest.TestCase):
         dialog.find_elements(By.TAG_NAME, 'button')[0].click()
         cookies = driver.get_cookies()
 
-    # @unittest.skip("")
+    @unittest.skip("")
     def test_002_choosing_random_channel_and_typing_a_message(self):
         print("test_002_choosing_random_channel_and_typing_a_message")
         self.driver.get(CONFIG_BASE_URL)
@@ -95,7 +102,7 @@ class Authorization(unittest.TestCase):
         wait.until(EC.presence_of_element_located(
             (By.XPATH, '//button[text()="Отправить"]'))).click()
 
-    # @unittest.skip("")
+    @unittest.skip("")
     def test_003_creating_and_deleting_a_channel(self):
         """Test creating and deleting a channel"""
         print("test_003_creating_and_deleting_a_channel")
@@ -149,7 +156,7 @@ class Authorization(unittest.TestCase):
             print('No toasts found!', ex)
         sleep(5)
 
-    # @unittest.skip("")
+    @unittest.skip("")
     def test_004_replying_to_a_comment(self):
         print("test_004_replying_to_a_comment")
         self.driver.get(CONFIG_BASE_URL)
@@ -179,7 +186,7 @@ class Authorization(unittest.TestCase):
             (By.XPATH, '//button[text()="Отправить"]'))).click()
         
 
-    # @unittest.skip("")
+    @unittest.skip("")
     def test_005_opening_a_discussing(self):
         """
         This test case verifies if the user can leave a reaction on a comment.
@@ -244,7 +251,7 @@ class Authorization(unittest.TestCase):
             (By.TAG_NAME, 'button')))
         driver.find_elements(By.TAG_NAME, 'button')[-1].click()
 
-    # @unittest.skip("")
+    @unittest.skip("")
     def test_006_editing_a_comment(self):
         print("test_006_editing_a_comment")
 
@@ -309,7 +316,7 @@ class Authorization(unittest.TestCase):
         print('Comments are different!')
         sleep(2)
 
-    # @unittest.skip("")
+    @unittest.skip("")
     def test_007_leaving_a_reaction(self):
 
         print("test_007_leaving_a_reaction")
@@ -340,7 +347,7 @@ class Authorization(unittest.TestCase):
         randomm_smile.click()
         sleep(0.5)
 
-    # @unittest.skip("")
+    @unittest.skip("")
     def test_008_deleting_a_message(self):
         print("test_008_deleting_a_message")
         self.driver.get(CONFIG_BASE_URL)
@@ -386,7 +393,7 @@ class Authorization(unittest.TestCase):
         print(comment_2)
         print('Comment has been deleted successfully!')
 
-    # @unittest.skip("")
+    @unittest.skip("")
     def test_009_archiving_a_channel_after_creating(self):
         print("test_009_archiving_a_channel")
 
@@ -485,7 +492,7 @@ class Authorization(unittest.TestCase):
             print('No toasts found!', ex)
 
         sleep(5)
-    # @unittest.skip("")
+    @unittest.skip("")
     def test_010_pin_a_message(self):
         print("test_010_pin_a_message")
         self.driver.get(CONFIG_BASE_URL)
@@ -539,7 +546,7 @@ class Authorization(unittest.TestCase):
             else:
                 self.assertNotEqual(pinned_comment.text, pinned_comment_texts)
                 
-    # @unittest.skip("")            
+    @unittest.skip("")            
     def test_011_adding_a_new_member_to_channel(self):
         print("test_011_adding_a_new_member_to_channel")
         self.driver.get(CONFIG_BASE_URL)
@@ -587,15 +594,78 @@ class Authorization(unittest.TestCase):
         
         
         
-    def test_012_changing_users_role(self):
-        print("test_012_changing_users_role")
-        self.driver.get(CONFIG_BASE_URL)
-        wait.until(EC.presence_of_element_located((By.CSS_SELECTOR,'a[aria-label="Система управления персоналом"]'))).click()
-        sleep(5)
+    # def test_012_changing_users_role(self):
+    #     print("test_012_changing_users_role")
+    #     self.driver.get(CONFIG_BASE_URL)
+    #     wait.until(EC.presence_of_element_located((By.CSS_SELECTOR,'a[aria-label="Система управления персоналом"]'))).click()
+    #     wait.until(EC.presence_of_element_located((By.CSS_SELECTOR, '.module-contents .users-list__wrapper .wrapper>.MuiGrid-root')))
+    #     user_list = driver.find_elements(By.CSS_SELECTOR, '.users-list__wrapper .wrapper>.MuiGrid-root')
+    #     user = random.choice(user_list)
+    #     user_role = user.find_elements(By.CSS_SELECTOR, '.MuiGrid-root>.MuiGrid-root')
+    #     user_role_last_element = user_role[-2]
+    #     user_role_set = user_role_last_element.find_element(By.CLASS_NAME, 'select__dropdown-indicator').click()
+    #     wait.until(EC.visibility_of_element_located((By.CSS_SELECTOR, 'span[aria-live="polite"]')))
+    #     user_role_selecting = driver.find_elements(By.CSS_SELECTOR, '.select__menu-list .select__option')
+    #     for user_role_select in user_role_selecting:
+    #         if user_role_select.text != user_role_last_element.text:
+    #             user_role_select.click()
+    #         else:
+    #             print('User role is already', user_role_last_element.text)
+        
+    def tearDown(self):
+        print('tearDown')
+class TestAPI(unittest.TestCase):
 
+    @classmethod
+    def setUpClass(self):
+        global user_token, user_refresh_token
+        body = {'phone':"+7"+USER_OWNER_PHONE}
+        response = requests.post(API_SIGN_IN_CHECK_AND_SEND, json = body)
+        response_json = response.json()
+        auth_key = response_json.get('payload')
+        auth_body = {"phone":"+79999999999","code":"9999", "key":auth_key}
+        login_response = requests.post(API_SIGN_IN, json = auth_body)
+        login_response_json = login_response.json()
+        user_token = login_response_json.get('meta').get('authToken')
+        user_refresh_token = login_response_json.get('meta').get('refreshToken')
+        print(user_token)
+        print(user_refresh_token)
+    def setUp(self):
+        print('setUp')
+        
+    def test_001_changing_users_role(self):
+        print("test_001_changing_users_role")
+        
+        headers = {'Authorization': 'Bearer ' + user_token}
+        get_Inna_role = requests.get(API_INNA_DERCHUK, headers=headers)
+        get_Inna_role_json = get_Inna_role.json()
+        get_Inna_role_json = get_Inna_role_json.get('payload').get('roles').get('userRoleId')   
+        if get_Inna_role_json == 12:
+            inna_body = {'rolesId':11}
+        elif get_Inna_role_json == 11:
+            inna_body = {'rolesId':12}
+        else:
+            print('No roles')
+            print(get_Inna_role_json)
+        print('Innas role is', get_Inna_role_json)
+        headers = {'Authorization': 'Bearer ' + user_token}
+        
+        response = requests.patch(API_INNA_DERCHUK_ROLE, json=inna_body, headers=headers)
+        response_json = response.json()
+        innas_role = response_json.get('payload').get('roles').get('userRoleId')
+        assert innas_role != get_Inna_role_json
+        
+        
     def tearDown(self):
         print('tearDown')
 
 
-if __name__ == '__main__':
-    unittest.main()
+tc1 = unittest.TestLoader().loadTestsFromTestCase(Authorization)
+tc2 = unittest.TestLoader().loadTestsFromTestCase(TestAPI)
+
+front_test = unittest.TestSuite(tc1)
+back_test = unittest.TestSuite(tc2)
+
+
+unittest.TextTestRunner(verbosity=2).run(front_test)
+unittest.TextTestRunner(verbosity=2).run(back_test)
