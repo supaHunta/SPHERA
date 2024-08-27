@@ -40,6 +40,7 @@ user_device_id = None
 
 YURI_ROLE = None
 
+
 def get_shadow_root(element):
     return driver.execute_script('return arguments[0].shadowRoot', element)
 
@@ -175,7 +176,8 @@ class Authorization(unittest.TestCase):
         random_channel.click()
         wait.until(EC.presence_of_all_elements_located(
             (By.CLASS_NAME, 'content-container')))
-        comment_box_parent = driver.find_element(By.CLASS_NAME, 'content-container')
+        comment_box_parent = driver.find_element(
+            By.CLASS_NAME, 'content-container')
         comment_box = comment_box_parent.find_elements(By.TAG_NAME, 'div')[0]
         comment1 = comment_box.find_elements(By.CLASS_NAME, "message-card")[-1]
         comment_first = comment1.text
@@ -191,7 +193,6 @@ class Authorization(unittest.TestCase):
             By.CSS_SELECTOR, 'div[aria-owns="quill-mention-list"]').send_keys(rand.generate_random_string(15))
         wait.until(EC.presence_of_element_located(
             (By.XPATH, '//button[text()="Отправить"]'))).click()
-        
 
     @unittest.skip("")
     def test_005_opening_a_discussing(self):
@@ -235,9 +236,11 @@ class Authorization(unittest.TestCase):
         # Wait for all the comments to load
         wait.until(EC.presence_of_all_elements_located(
             (By.CLASS_NAME, 'content-container')))
-        comment_box_parent = driver.find_element(By.CLASS_NAME, 'content-container')
+        comment_box_parent = driver.find_element(
+            By.CLASS_NAME, 'content-container')
         comment_box = comment_box_parent.find_elements(By.TAG_NAME, 'div')[0]
-        comment_box_unit = comment_box.find_elements(By.CLASS_NAME, 'message-card')
+        comment_box_unit = comment_box.find_elements(
+            By.CLASS_NAME, 'message-card')
         comment1 = comment_box_unit[-1]
         # Select a random comment
         # Perform a hover action on the comment
@@ -284,9 +287,11 @@ class Authorization(unittest.TestCase):
         # Wait for all the comments to load
         wait.until(EC.presence_of_all_elements_located(
             (By.CLASS_NAME, 'content-container')))
-        comment_box_parent = driver.find_element(By.CLASS_NAME, 'content-container')
+        comment_box_parent = driver.find_element(
+            By.CLASS_NAME, 'content-container')
         comment_box = comment_box_parent.find_elements(By.TAG_NAME, 'div')[0]
-        comment_box_unit = comment_box.find_elements(By.CLASS_NAME, "message-card")[-1]
+        comment_box_unit = comment_box.find_elements(
+            By.CLASS_NAME, "message-card")[-1]
         comment_first = comment_box_unit.text
         comment = comment_box_unit
 
@@ -311,12 +316,13 @@ class Authorization(unittest.TestCase):
         # Select a last comment
         wait.until(EC.presence_of_all_elements_located(
             (By.CLASS_NAME, 'content-container')))
-        comment_box_parent = driver.find_element(By.CLASS_NAME, 'content-container')
+        comment_box_parent = driver.find_element(
+            By.CLASS_NAME, 'content-container')
         comment_box = comment_box_parent.find_elements(By.TAG_NAME, 'div')[0]
-        comment_box_unit = comment_box.find_elements(By.CLASS_NAME, "message-card")[-1]
+        comment_box_unit = comment_box.find_elements(
+            By.CLASS_NAME, "message-card")[-1]
         comment_second = comment_box_unit.text
         comment = comment_box_unit
-
 
         # Check if the comments are different
         self.assertNotEqual(comment_first, comment_second)
@@ -336,9 +342,11 @@ class Authorization(unittest.TestCase):
         random_channel.click()
         wait.until(EC.presence_of_all_elements_located(
             (By.CLASS_NAME, 'content-container')))
-        comment_box_parent = driver.find_element(By.CLASS_NAME, 'content-container')
+        comment_box_parent = driver.find_element(
+            By.CLASS_NAME, 'content-container')
         comment_box = comment_box_parent.find_elements(By.TAG_NAME, 'div')[0]
-        comment_box_unit = comment_box.find_elements(By.CLASS_NAME, "message-card")
+        comment_box_unit = comment_box.find_elements(
+            By.CLASS_NAME, "message-card")
         comment1 = comment_box_unit[-1]
         comment_hover1 = ActionChains(driver).move_to_element(comment1)
         comment_hover1.perform()
@@ -372,9 +380,11 @@ class Authorization(unittest.TestCase):
             (By.XPATH, '//button[text()="Отправить"]'))).click()
         wait.until(EC.presence_of_all_elements_located(
             (By.CLASS_NAME, 'content-container')))
-        comment_box_parent = driver.find_element(By.CLASS_NAME, 'content-container')
+        comment_box_parent = driver.find_element(
+            By.CLASS_NAME, 'content-container')
         comment_box = comment_box_parent.find_elements(By.TAG_NAME, 'div')[0]
-        comment_box_unit = comment_box.find_elements(By.CLASS_NAME, "message-card")
+        comment_box_unit = comment_box.find_elements(
+            By.CLASS_NAME, "message-card")
         comment = comment_box_unit[-1]
         comment_1 = comment.text
         comment_hover = ActionChains(driver).move_to_element(comment)
@@ -390,9 +400,11 @@ class Authorization(unittest.TestCase):
         wait.until(EC.presence_of_element_located(
             (By.CSS_SELECTOR, 'button[type="submit"]'))).click()
         sleep(2)
-        comment_box_parent = driver.find_element(By.CLASS_NAME, 'content-container')
+        comment_box_parent = driver.find_element(
+            By.CLASS_NAME, 'content-container')
         comment_box = comment_box_parent.find_elements(By.TAG_NAME, 'div')[0]
-        comment_box_unit = comment_box.find_elements(By.CLASS_NAME, "message-card")
+        comment_box_unit = comment_box.find_elements(
+            By.CLASS_NAME, "message-card")
         comment = comment_box_unit[-1]
         comment_2 = comment.text
         self.assertNotEqual(comment_1, comment_2)
@@ -499,6 +511,7 @@ class Authorization(unittest.TestCase):
             print('No toasts found!', ex)
 
         sleep(5)
+
     @unittest.skip("")
     def test_010_pin_a_message(self):
         print("test_010_pin_a_message")
@@ -519,9 +532,11 @@ class Authorization(unittest.TestCase):
         sleep(0.5)
         wait.until(EC.presence_of_all_elements_located(
             (By.CLASS_NAME, 'content-container')))
-        comment_box_parent = driver.find_element(By.CLASS_NAME, 'content-container')
+        comment_box_parent = driver.find_element(
+            By.CLASS_NAME, 'content-container')
         comment_box = comment_box_parent.find_elements(By.TAG_NAME, 'div')[0]
-        comment_box_unit = comment_box.find_elements(By.CLASS_NAME, "message-card")
+        comment_box_unit = comment_box.find_elements(
+            By.CLASS_NAME, "message-card")
         comment = comment_box_unit[0]
         pinned_comment_texts = comment.text
         comment_hover = ActionChains(driver).move_to_element(comment)
@@ -534,10 +549,12 @@ class Authorization(unittest.TestCase):
         WebDriverWait(menu_container, 10).until(
             EC.presence_of_all_elements_located((By.TAG_NAME, 'li')))
         menu_container.find_elements(By.TAG_NAME, 'li')[1].click()
-        driver.find_element(By.CSS_SELECTOR, 'div[role="presentation"]').click()
-        
-        wait.until(EC.element_to_be_clickable((By.CSS_SELECTOR, '.feed-header .MuiBox-root .header__pinned'))).click()
- 
+        driver.find_element(
+            By.CSS_SELECTOR, 'div[role="presentation"]').click()
+
+        wait.until(EC.element_to_be_clickable(
+            (By.CSS_SELECTOR, '.feed-header .MuiBox-root .header__pinned'))).click()
+
         wait.until(EC.presence_of_all_elements_located(
             (By.CLASS_NAME, 'header__pinned-block')))
         pin_block = driver.find_element(By.CLASS_NAME, 'header__pinned-block')
@@ -552,8 +569,8 @@ class Authorization(unittest.TestCase):
                 sleep(0.5)
             else:
                 self.assertNotEqual(pinned_comment.text, pinned_comment_texts)
-                
-    @unittest.skip("")            
+
+    @unittest.skip("")
     def test_011_adding_a_new_member_to_channel(self):
         print("test_011_adding_a_new_member_to_channel")
         self.driver.get(CONFIG_BASE_URL)
@@ -563,44 +580,55 @@ class Authorization(unittest.TestCase):
             By.CLASS_NAME, 'channel-data-container')[1:]
         random_channel = random.choice(channel)
         random_channel.click()
-        wait.until(EC.presence_of_element_located((By.CLASS_NAME, 'channel-member__icon-button'))).click()
-        wait.until(EC.presence_of_element_located((By.CSS_SELECTOR, 'ul[role="listbox"]')))
+        wait.until(EC.presence_of_element_located(
+            (By.CLASS_NAME, 'channel-member__icon-button'))).click()
+        wait.until(EC.presence_of_element_located(
+            (By.CSS_SELECTOR, 'ul[role="listbox"]')))
         user_list = driver.find_element(By.CSS_SELECTOR, 'ul[role="listbox"]')
         user = user_list.find_elements(By.TAG_NAME, 'li')[:5]
         selected_user = user[0]
-        
-        user_name = selected_user.find_element(By.CLASS_NAME, 'list-item__name').text
+
+        user_name = selected_user.find_element(
+            By.CLASS_NAME, 'list-item__name').text
         print(user_name)
         selected_user.click()
-        wait.until(EC.element_to_be_clickable((By.CSS_SELECTOR, 'button[type="submit"]'))).click()
+        wait.until(EC.element_to_be_clickable(
+            (By.CSS_SELECTOR, 'button[type="submit"]'))).click()
         sleep(0.5)
         wait.until(EC.presence_of_all_elements_located(
             (By.CLASS_NAME, 'Toastify__toast--success')))
         toast = driver.find_element(By.CLASS_NAME, 'Toastify__toast--success')
         self.assertEqual(toast.text, "Пользователи успешно добавлены")
-        wait.until_not(EC.visibility_of_element_located((By.CSS_SELECTOR, 'div[role="presentation"]')))
-        wait.until_not(EC.visibility_of_element_located((By.CLASS_NAME, 'Toastify__toast--success')))
-        wait.until(EC.element_to_be_clickable((By.CLASS_NAME, 'channel-member__avatar'))).click()
-        wait.until(EC.presence_of_element_located((By.CSS_SELECTOR, '.dialog__paper .MuiBox-root .list__member-item')))
-        items = driver.find_elements(By.CSS_SELECTOR, '.dialog__paper .MuiBox-root .list__member-item')
-        
+        wait.until_not(EC.visibility_of_element_located(
+            (By.CSS_SELECTOR, 'div[role="presentation"]')))
+        wait.until_not(EC.visibility_of_element_located(
+            (By.CLASS_NAME, 'Toastify__toast--success')))
+        wait.until(EC.element_to_be_clickable(
+            (By.CLASS_NAME, 'channel-member__avatar'))).click()
+        wait.until(EC.presence_of_element_located(
+            (By.CSS_SELECTOR, '.dialog__paper .MuiBox-root .list__member-item')))
+        items = driver.find_elements(
+            By.CSS_SELECTOR, '.dialog__paper .MuiBox-root .list__member-item')
+
         for item in items:
-            item_name = item.find_element(By.CSS_SELECTOR, '.member-item__profile .MuiBox-root .profile-item__name')
+            item_name = item.find_element(
+                By.CSS_SELECTOR, '.member-item__profile .MuiBox-root .profile-item__name')
             if item_name.text == user_name:
                 self.assertEqual(item_name.text, user_name)
-                print('Found invited person: ',item_name.text)
+                print('Found invited person: ', item_name.text)
                 print('User has been successfully added to the channel!')
                 sleep(0.5)
-                user_deletion = item.find_element(By.CLASS_NAME, 'member-item__more-button').click()
-                deleting_button = driver.find_elements(By.CSS_SELECTOR, '.MuiPopover-root .MuiPaper-elevation .MuiMenu-list .MuiMenuItem-root')[-1].click()
-                wait.until(EC.presence_of_element_located((By.CSS_SELECTOR, 'button[type="submit"]'))).click()
+                user_deletion = item.find_element(
+                    By.CLASS_NAME, 'member-item__more-button').click()
+                deleting_button = driver.find_elements(
+                    By.CSS_SELECTOR, '.MuiPopover-root .MuiPaper-elevation .MuiMenu-list .MuiMenuItem-root')[-1].click()
+                wait.until(EC.presence_of_element_located(
+                    (By.CSS_SELECTOR, 'button[type="submit"]'))).click()
                 sleep(0.5)
             else:
                 self.assertNotEqual(item.text, user_name)
-                print('Wrong person: ',item_name.text)
-        
-        
-        
+                print('Wrong person: ', item_name.text)
+
     # def test_012_changing_users_role(self):
     #     print("test_012_changing_users_role")
     #     self.driver.get(CONFIG_BASE_URL)
@@ -618,81 +646,86 @@ class Authorization(unittest.TestCase):
     #             user_role_select.click()
     #         else:
     #             print('User role is already', user_role_last_element.text)
-        
+
     def tearDown(self):
         print('tearDown')
+
+
 class TestAPI(unittest.TestCase):
 
     @classmethod
     def setUpClass(self):
         global user_token, user_refresh_token
-        body = {'phone':"+79999999999"}
-        response = requests.post(API_SIGN_IN_CHECK_AND_SEND, json = body)
+        body = {'phone': "+79999999999"}
+        response = requests.post(API_SIGN_IN_CHECK_AND_SEND, json=body)
         response_json = response.json()
-        print('\nresponse_json',response_json)
+        print('\nresponse_json', response_json)
         auth_key = response_json.get('payload')
-        print('\nauth_key',auth_key)
-        auth_headers = {'Device-Id': HEADER_DEVICE_ID }
-        auth_body = {"phone":"+79999999999","key":auth_key,"code":"9999" }
-        login_response = requests.post(API_SIGN_IN, json = auth_body, headers=auth_headers)
+        print('\nauth_key', auth_key)
+        auth_headers = {'Device-Id': HEADER_DEVICE_ID}
+        auth_body = {"phone": "+79999999999", "key": auth_key, "code": "9999"}
+        login_response = requests.post(
+            API_SIGN_IN, json=auth_body, headers=auth_headers)
         login_response_json = login_response.json()
-        print('\nlogin_response_json',login_response_json)
+        print('\nlogin_response_json', login_response_json)
         user_token = login_response_json.get('meta', {}).get('authToken')
-        user_refresh_token = login_response_json.get('meta', {}).get('refreshToken')
+        user_refresh_token = login_response_json.get(
+            'meta', {}).get('refreshToken')
         print(user_token)
         print(user_refresh_token)
+
     def setUp(self):
         print('setUp')
-        
+
     def test_001_changing_users_role(self):
         print("test_001_changing_users_role")
         global YURI_ROLE
         headers = {'Authorization': f'Bearer {user_token}'}
         get_yuri_role = requests.get(API_YURI_MAMEDOV, headers=headers)
         get_yuri_role_json = get_yuri_role.json()
-        print('\nget_Inna_role_json',get_yuri_role_json)
-        get_yuri_role_json_obj= get_yuri_role_json.get('payload', {}).get('roles', {})[0].get('userRoleId')   
+        print('\nget_Inna_role_json', get_yuri_role_json)
+        get_yuri_role_json_obj = get_yuri_role_json.get(
+            'payload', {}).get('roles', {})[0].get('userRoleId')
         yuri_body = {}
         if get_yuri_role_json_obj == 12:
-            yuri_body = {'rolesId':[11]}     #Admin
-            YURI_ROLE = 11     
+            yuri_body = {'rolesId': [11]}  # Admin
+            YURI_ROLE = 11
         elif get_yuri_role_json_obj == 11:
-            yuri_body = {'rolesId':[12]}     #User
+            yuri_body = {'rolesId': [12]}  # User
             YURI_ROLE = 12
         else:
             print('\nNo roles')
-            print('\n',get_yuri_role_json_obj)
+            print('\n', get_yuri_role_json_obj)
         print('\nInnas role is', get_yuri_role_json_obj)
         headers = {'Authorization': f'Bearer {user_token}'}
-        
-        response = requests.patch(API_YURI_MAMEDOV_ROLE, json=yuri_body, headers=headers)
+
+        response = requests.patch(
+            API_YURI_MAMEDOV_ROLE, json=yuri_body, headers=headers)
         response_json = response.json()
-        print('\nresponse_json',response_json)
-        yurys_role = response_json.get('payload', {}).get('roles', {})[0].get('userRoleId')
-        print('\ninnas_role',yurys_role)
+        print('\nresponse_json', response_json)
+        yurys_role = response_json.get('payload', {}).get('roles', {})[
+            0].get('userRoleId')
+        print('\ninnas_role', yurys_role)
         assert yurys_role != get_yuri_role_json_obj
-        
-        
+
     def tearDown(self):
         print('tearDown')
 
 
 class User_check_permitions(unittest.TestCase):
-    
-    
+
     def _prepare_form_fields(self, phone):
         self.email_field = second_driver.find_element(
             By.NAME, "phone").send_keys(phone)
-    @classmethod   
+
+    @classmethod
     def setUpClass(self):
         self.second_driver = second_driver
         self.second_driver.get(CONFIG_BASE_URL)
-        
+
     def setUp(self):
         print('\nsetup')
-        
-        
-        
+
     def test_001_admin_authorization(self):
         second_wait.until(EC.presence_of_element_located((By.NAME, "phone")))
         self._prepare_form_fields(USER_ADMIN_PHONE)
@@ -709,23 +742,27 @@ class User_check_permitions(unittest.TestCase):
             By.CSS_SELECTOR, 'button[type="button"]')[-1].click()
         second_wait.until(EC.presence_of_element_located(
             (By. CSS_SELECTOR, "div[role = 'dialog']")))
-        dialog = second_driver.find_element(By.CLASS_NAME, 'MuiDialogActions-spacing')
-        second_wait.until(EC.presence_of_element_located((By.TAG_NAME, 'button')))
+        dialog = second_driver.find_element(
+            By.CLASS_NAME, 'MuiDialogActions-spacing')
+        second_wait.until(EC.presence_of_element_located(
+            (By.TAG_NAME, 'button')))
         dialog.find_elements(By.TAG_NAME, 'button')[0].click()
-        
-           
+
     def test_002_check_permitions(self):
         second_driver.get(CONFIG_BASE_URL)
         try:
-            second_wait.until(EC.presence_of_element_located((By.CSS_SELECTOR,'a[aria-label="Система управления персоналом"]'))).click()
-            title = second_driver.find_element(By.CLASS_NAME, 'module-title').text
+            second_wait.until(EC.presence_of_element_located(
+                (By.CSS_SELECTOR, 'a[aria-label="Система управления персоналом"]'))).click()
+            title = second_driver.find_element(
+                By.CLASS_NAME, 'module-title').text
             self.assertEqual(title, "Сотрудники")
             print('User is allowed to access')
         except:
             print('User is not allowed to access')
-           
+
     def tearDown(self):
         print("tearDown")
+
 
 tc1 = unittest.TestLoader().loadTestsFromTestCase(Authorization)
 tc2 = unittest.TestLoader().loadTestsFromTestCase(TestAPI)
@@ -737,4 +774,4 @@ check_perm = unittest.TestSuite(tc3)
 
 unittest.TextTestRunner(verbosity=2).run(front_test)
 unittest.TextTestRunner(verbosity=2).run(back_test)
-unittest.TextTestRunner(verbosity=2).run(check_perm)    
+unittest.TextTestRunner(verbosity=2).run(check_perm)
