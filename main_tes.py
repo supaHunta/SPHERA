@@ -16,22 +16,29 @@ chrome_options = Options()
 chrome_options.add_argument("user-data-dir=selenium")
 chrome_options.add_argument("auto-open-devtools-for-tabs")
 
+
+second_driver = webdriver.Chrome()
 driver = webdriver.Chrome()
 wait = WebDriverWait(driver, 30)
+second_wait = WebDriverWait(second_driver, 30)
 
 CONFIG_BASE_URL = "https://staging.sphera.work/"
 API_SIGN_IN_CHECK_AND_SEND = 'https://api.staging.sphera.work/api/v1/auth/phone/check-and-send'
 API_SIGN_IN = 'https://api.staging.sphera.work/api/v1/auth/sign-in'
-API_INNA_DERCHUK_ROLE = 'https://api.staging.sphera.work/api/v1/users/update/7'
-API_INNA_DERCHUK = 'https://api.staging.sphera.work/api/v1/users/profile/7'
+API_YURI_MAMEDOV_ROLE = 'https://api.staging.sphera.work/api/v1/users/update/6'
+API_YURI_MAMEDOV = 'https://api.staging.sphera.work/api/v1/users/profile/6'
 
 USER_OWNER_PHONE = "9999999999"
-USER_ADMIN_PHONE = "9777777777"
+USER_ADMIN_PHONE = "9888888888"
 USER_USER_PHONE = "9111111111"
+HEADER_DEVICE_ID = "9b2bbd69-1829-44f2-870c-c4ad29aed3c4"
+
 
 user_token = None
 user_refresh_token = None
 user_device_id = None
+
+YURI_ROLE = None
 
 def get_shadow_root(element):
     return driver.execute_script('return arguments[0].shadowRoot', element)
@@ -619,15 +626,19 @@ class TestAPI(unittest.TestCase):
     @classmethod
     def setUpClass(self):
         global user_token, user_refresh_token
-        body = {'phone':"+7"+USER_OWNER_PHONE}
+        body = {'phone':"+79999999999"}
         response = requests.post(API_SIGN_IN_CHECK_AND_SEND, json = body)
         response_json = response.json()
+        print('\nresponse_json',response_json)
         auth_key = response_json.get('payload')
-        auth_body = {"phone":"+79999999999","code":"9999", "key":auth_key}
-        login_response = requests.post(API_SIGN_IN, json = auth_body)
+        print('\nauth_key',auth_key)
+        auth_headers = {'Device-Id': {HEADER_DEVICE_ID} }
+        auth_body = {"phone":"+79999999999","key":auth_key,"code":"9999" }
+        login_response = requests.post(API_SIGN_IN, json = auth_body, headers=auth_headers)
         login_response_json = login_response.json()
-        user_token = login_response_json.get('meta').get('authToken')
-        user_refresh_token = login_response_json.get('meta').get('refreshToken')
+        print('\nlogin_response_json',login_response_json)
+        user_token = login_response_json.get('meta', {}).get('authToken')
+        user_refresh_token = login_response_json.get('meta', {}).get('refreshToken')
         print(user_token)
         print(user_refresh_token)
     def setUp(self):
@@ -635,30 +646,77 @@ class TestAPI(unittest.TestCase):
         
     def test_001_changing_users_role(self):
         print("test_001_changing_users_role")
-        
-        headers = {'Authorization': 'Bearer ' + user_token}
-        get_Inna_role = requests.get(API_INNA_DERCHUK, headers=headers)
-        get_Inna_role_json = get_Inna_role.json()
-        get_Inna_role_json = get_Inna_role_json.get('payload').get('roles').get('userRoleId')   
-        if get_Inna_role_json == 12:
-            inna_body = {'rolesId':11}
-        elif get_Inna_role_json == 11:
-            inna_body = {'rolesId':12}
+        global YURI_ROLE
+        headers = {'Authorization': f'Bearer {user_token}'}
+        get_yuri_role = requests.get(API_YURI_MAMEDOV, headers=headers)
+        get_yuri_role_json = get_yuri_role.json()
+        print('\nget_Inna_role_json',get_yuri_role_json)
+        get_yuri_role_json_obj= get_yuri_role_json.get('payload', {}).get('roles', {})[0].get('userRoleId')   
+        yuri_body = {}
+        if get_yuri_role_json_obj == 12:
+            yuri_body = {'rolesId':[11]}     #Admin
+            YURI_ROLE = 11     
+        elif get_yuri_role_json_obj == 11:
+            yuri_body = {'rolesId':[12]}     #User
+            YURI_ROLE = 12
         else:
-            print('No roles')
-            print(get_Inna_role_json)
-        print('Innas role is', get_Inna_role_json)
-        headers = {'Authorization': 'Bearer ' + user_token}
+            print('\nNo roles')
+            print('\n',get_yuri_role_json_obj)
+        print('\nInnas role is', get_yuri_role_json_obj)
+        headers = {'Authorization': f'Bearer {user_token}'}
         
-        response = requests.patch(API_INNA_DERCHUK_ROLE, json=inna_body, headers=headers)
+        response = requests.patch(API_YURI_MAMEDOV_ROLE, json=yuri_body, headers=headers)
         response_json = response.json()
-        innas_role = response_json.get('payload').get('roles').get('userRoleId')
-        assert innas_role != get_Inna_role_json
+        print('\nresponse_json',response_json)
+        yurys_role = response_json.get('payload', {}).get('roles', {})[0].get('userRoleId')
+        print('\ninnas_role',yurys_role)
+        assert yurys_role != get_yuri_role_json_obj
         
         
     def tearDown(self):
         print('tearDown')
 
+
+class User_check_permitions(unittest.TestCase):
+    
+    
+    def _prepare_form_fields(self, phone):
+        self.email_field = second_driver.find_element(
+            By.NAME, "phone").send_keys(phone)
+        
+    def setUpClass(self):
+        self.second_driver = second_driver
+        self.second_driver.get(CONFIG_BASE_URL)
+        
+    def setUp(self):
+        print('\nsetup')
+        
+        
+        
+    def test_001_admin_authorization(self):
+        second_wait.until(EC.presence_of_element_located((By.NAME, "phone")))
+        self._prepare_form_fields(USER_OWNER_PHONE)
+        second_wait.until(EC.presence_of_element_located(
+            (By.CSS_SELECTOR, 'button.phone-input__receive-button:not([disabled])')))
+        try:
+            second_driver.find_element(By.CSS_SELECTOR, "button").click()
+        except Exception as ex:
+            print('Element not found', ex)
+        second_wait.until(EC.presence_of_element_located(
+            (By.ID, "one-time-code"))).send_keys("9999")
+        sleep(3)
+        second_driver.find_elements(
+            By.CSS_SELECTOR, 'button[type="button"]')[-1].click()
+        second_wait.until(EC.presence_of_element_located(
+            (By. CSS_SELECTOR, "div[role = 'dialog']")))
+        dialog = second_driver.find_element(By.CLASS_NAME, 'MuiDialogActions-spacing')
+        second_wait.until(EC.presence_of_element_located((By.TAG_NAME, 'button')))
+        dialog.find_elements(By.TAG_NAME, 'button')[0].click()
+           
+           
+           
+    def tearDown(self):
+        print("tearDown")
 
 tc1 = unittest.TestLoader().loadTestsFromTestCase(Authorization)
 tc2 = unittest.TestLoader().loadTestsFromTestCase(TestAPI)
