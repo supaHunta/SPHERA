@@ -632,7 +632,7 @@ class TestAPI(unittest.TestCase):
         print('\nresponse_json',response_json)
         auth_key = response_json.get('payload')
         print('\nauth_key',auth_key)
-        auth_headers = {'Device-Id': {HEADER_DEVICE_ID} }
+        auth_headers = {'Device-Id': HEADER_DEVICE_ID }
         auth_body = {"phone":"+79999999999","key":auth_key,"code":"9999" }
         login_response = requests.post(API_SIGN_IN, json = auth_body, headers=auth_headers)
         login_response_json = login_response.json()
@@ -683,7 +683,7 @@ class User_check_permitions(unittest.TestCase):
     def _prepare_form_fields(self, phone):
         self.email_field = second_driver.find_element(
             By.NAME, "phone").send_keys(phone)
-        
+    @classmethod   
     def setUpClass(self):
         self.second_driver = second_driver
         self.second_driver.get(CONFIG_BASE_URL)
@@ -695,7 +695,7 @@ class User_check_permitions(unittest.TestCase):
         
     def test_001_admin_authorization(self):
         second_wait.until(EC.presence_of_element_located((By.NAME, "phone")))
-        self._prepare_form_fields(USER_OWNER_PHONE)
+        self._prepare_form_fields(USER_ADMIN_PHONE)
         second_wait.until(EC.presence_of_element_located(
             (By.CSS_SELECTOR, 'button.phone-input__receive-button:not([disabled])')))
         try:
@@ -703,7 +703,7 @@ class User_check_permitions(unittest.TestCase):
         except Exception as ex:
             print('Element not found', ex)
         second_wait.until(EC.presence_of_element_located(
-            (By.ID, "one-time-code"))).send_keys("9999")
+            (By.ID, "one-time-code"))).send_keys("8888")
         sleep(3)
         second_driver.find_elements(
             By.CSS_SELECTOR, 'button[type="button"]')[-1].click()
@@ -712,18 +712,29 @@ class User_check_permitions(unittest.TestCase):
         dialog = second_driver.find_element(By.CLASS_NAME, 'MuiDialogActions-spacing')
         second_wait.until(EC.presence_of_element_located((By.TAG_NAME, 'button')))
         dialog.find_elements(By.TAG_NAME, 'button')[0].click()
+        
            
-           
+    def test_002_check_permitions(self):
+        second_driver.get(CONFIG_BASE_URL)
+        try:
+            second_wait.until(EC.presence_of_element_located((By.CSS_SELECTOR,'a[aria-label="Система управления персоналом"]'))).click()
+            title = second_driver.find_element(By.CLASS_NAME, 'module-title').text
+            self.assertEqual(title, "Сотрудники")
+            print('User is allowed to access')
+        except:
+            print('User is not allowed to access')
            
     def tearDown(self):
         print("tearDown")
 
 tc1 = unittest.TestLoader().loadTestsFromTestCase(Authorization)
 tc2 = unittest.TestLoader().loadTestsFromTestCase(TestAPI)
+tc3 = unittest.TestLoader().loadTestsFromTestCase(User_check_permitions)
 
 front_test = unittest.TestSuite(tc1)
 back_test = unittest.TestSuite(tc2)
-
+check_perm = unittest.TestSuite(tc3)
 
 unittest.TextTestRunner(verbosity=2).run(front_test)
 unittest.TextTestRunner(verbosity=2).run(back_test)
+unittest.TextTestRunner(verbosity=2).run(check_perm)    
